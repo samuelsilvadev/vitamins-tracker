@@ -10,9 +10,19 @@ Start your Strapi application with autoReload enabled. [Learn more](https://docs
 yarn develop
 ```
 
+#### Admin panel credentials
+
+The local database is ready to use a general user, and you can use the follwing credentials
+
+```text
+email: admin@vitaminstracker.com
+password: iQ2F9nm_Usp@cZKT3Z*N
+```
+
 ### `start`
 
 Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/developer-docs/latest/developer-resources/cli/CLI.html#strapi-start)
+
 
 ```
 yarn start
