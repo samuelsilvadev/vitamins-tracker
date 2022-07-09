@@ -1,5 +1,6 @@
 import { List, Spinner, Text } from "@wonderflow/react-components";
 import SearchForm from "components/search-form/SearchForm";
+import { useState } from "react";
 import { InfiniteData, useInfiniteQuery } from "react-query";
 import styles from "./Home.module.css";
 
@@ -7,10 +8,17 @@ function cx(...classNames: string[]) {
   return classNames.join(" ");
 }
 
-async function fetchFoodsPaginated({ page = 1 }) {
+async function fetchFoodsPaginated({ page = 1, foodName = "" }) {
   try {
+    const filterByFoodNameQuery = foodName
+      ? `&filters[name][$contains]=${foodName}`
+      : "";
+
     const response = await fetch(
-      process.env.REACT_APP_API_BASE_PATH + "/foods?pagination[page]=" + page,
+      process.env.REACT_APP_API_BASE_PATH +
+        "/foods?pagination[page]=" +
+        page +
+        filterByFoodNameQuery,
       { method: "GET" }
     );
     const parsedResponse = await response.json();
@@ -64,7 +72,7 @@ function FoodsList({ foods }: FoodsListProps) {
 }
 
 const foodsKeyFactory = {
-  infiniteFoods: ["infiniteFoods"] as const,
+  infiniteFoods: (searchTerm: string) => ["infiniteFoods", searchTerm] as const,
 };
 
 type HomeContentManagementProps = {
@@ -95,7 +103,7 @@ function HomeContentManagement({
     return (
       <div
         className={cx(
-          styles.homeContentManagementErrorWrapper,
+          styles.homeContentManagementErrorOrEmptyWrapper,
           styles.homeContentManagementWrapper
         )}
       >
@@ -104,6 +112,26 @@ function HomeContentManagement({
         </Text>
         <Text role="alert" as="p" sentiment="danger">
           Please try again later.
+        </Text>
+      </div>
+    );
+  }
+
+  const isEmpty = (data?.pages[0]?.data.length ?? 0) === 0;
+
+  if (isEmpty) {
+    return (
+      <div
+        className={cx(
+          styles.homeContentManagementErrorOrEmptyWrapper,
+          styles.homeContentManagementWrapper
+        )}
+      >
+        <Text role="alert" as="p" sentiment="danger">
+          No results were found
+        </Text>
+        <Text role="alert" as="p" sentiment="danger">
+          Please try another term.
         </Text>
       </div>
     );
@@ -132,18 +160,24 @@ function HomeContentManagement({
 }
 
 function Home() {
+  const [foodNameSearchTerm, setFoodNameSearchTerm] = useState("");
   const { isLoading, data, error } = useInfiniteQuery<
     FoodsPaginatedResponse,
     Error
   >(
-    foodsKeyFactory.infiniteFoods,
-    ({ pageParam = 1 }) => fetchFoodsPaginated({ page: pageParam }),
+    foodsKeyFactory.infiniteFoods(foodNameSearchTerm),
+    ({ pageParam = 1 }) =>
+      fetchFoodsPaginated({ page: pageParam, foodName: foodNameSearchTerm }),
     { retry: false }
   );
 
+  const handleOnSearch = (foodName: string) => {
+    setFoodNameSearchTerm(foodName);
+  };
+
   return (
     <>
-      <SearchForm />
+      <SearchForm onSearch={handleOnSearch} />
       <HomeContentManagement isLoading={isLoading} error={error} data={data} />
     </>
   );

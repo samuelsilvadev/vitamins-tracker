@@ -3,7 +3,11 @@ import { PrimitiveInputType } from "@wonderflow/react-components/dist/components
 import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "./SearchForm.module.css";
 
-function SearchForm() {
+type SearchFormProps = {
+  onSearch: (foodName: string) => void;
+};
+
+function SearchForm({ onSearch }: SearchFormProps) {
   const [foodName, setFoodName] = useState("");
 
   const handleOnChangeFoodName = (event: ChangeEvent<PrimitiveInputType>) => {
@@ -12,6 +16,7 @@ function SearchForm() {
 
   const handleOnSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    onSearch(foodName);
   };
 
   return (
