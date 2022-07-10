@@ -14,3 +14,28 @@
   flex-direction: column;
   border: 2px solid var(--cta-default);
 }
+
+.foodList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+}
+
+.foodList > * {
+  width: calc(25% - var(--space-16));
+}
+
+.foodCard {
+  border: 1px solid hsl(var(--color-red-0));
+  border-radius: var(--radius-4);
+  padding: var(--space-8);
+  height: 100%;
+}
+
+.foodCardImage {
+  object-fit: cover;
+  height: 200px;
+  width: 100%;
+  max-width: 100%;
+}
