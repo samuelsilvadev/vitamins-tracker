@@ -16,7 +16,7 @@ async function fetchFoodsPaginated({ page = 1, foodName = "" }) {
 
     const response = await fetch(
       process.env.REACT_APP_API_BASE_PATH +
-        "/foods?populate[0]=images&pagination[page]=" +
+        "/foods?populate[0]=images,vitamins&pagination[page]=" +
         page +
         filterByFoodNameQuery,
       { method: "GET" }
@@ -57,12 +57,27 @@ type Image = {
   };
 };
 
+type Vitamin = {
+  attributes: {
+    createdAt: string;
+    description: string | null;
+    locale: string;
+    name: string;
+    publishedAt: string;
+    updatedAt: string;
+  };
+  id: number;
+};
+
 type Food = {
   id: string;
   attributes: {
     name: string;
     images: {
       data: Image[];
+    };
+    vitamins: {
+      data: Vitamin[];
     };
   };
 };
@@ -79,7 +94,12 @@ type FoodsPaginatedResponse = {
   };
 };
 
-type FoodCardProps = { id: string; name: string; images: Image[] };
+type FoodCardProps = {
+  id: string;
+  name: string;
+  images: Image[];
+  vitamins: Vitamin[];
+};
 
 function extractAllImagesFormats(image?: Image) {
   if (!image) {
@@ -114,7 +134,7 @@ function extractAllImagesFormats(image?: Image) {
 
 const IMAGES_SIZES = ["320w", "640w", "1280w", "2560w"];
 
-function FoodCard({ id, name, images }: FoodCardProps) {
+function FoodCard({ id, name, images, vitamins }: FoodCardProps) {
   const [firstImage] = images;
   const allFormatsFromFirstImage = extractAllImagesFormats(firstImage);
 
@@ -141,6 +161,15 @@ function FoodCard({ id, name, images }: FoodCardProps) {
       <Text as="h2">
         {id} - {name}
       </Text>
+      {vitamins.length > 0 ? (
+        <ul className={styles.vitaminsList}>
+          {vitamins.map(
+            ({ id: vitaminId, attributes: { name: vitaminName } }) => (
+              <li key={vitaminId}>{vitaminName}</li>
+            )
+          )}
+        </ul>
+      ) : null}
     </article>
   );
 }
@@ -152,9 +181,14 @@ type FoodsListProps = {
 function FoodsList({ foods }: FoodsListProps) {
   return (
     <ul className={styles.foodList}>
-      {foods.map(({ id, attributes: { name, images } }) => (
+      {foods.map(({ id, attributes: { name, images, vitamins } }) => (
         <li key={id}>
-          <FoodCard id={id} name={name} images={images.data} />
+          <FoodCard
+            id={id}
+            name={name}
+            images={images.data}
+            vitamins={vitamins.data}
+          />
         </li>
       ))}
     </ul>
