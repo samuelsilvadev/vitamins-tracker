@@ -28,6 +28,8 @@
 }
 
 .foodCard {
+  display: flex;
+  flex-direction: column;
   border: 1px solid hsl(var(--color-red-0));
   border-radius: var(--radius-4);
   padding: var(--space-8);
@@ -45,10 +47,13 @@
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  padding: 0;
+  padding: var(--space-8) 0;
 }
 
 .vitaminsList > *:not(:last-child)::after {
   content: ',\00a0';
+}
 
+.foodCardConsumedButton {
+  margin-top: auto;
 }

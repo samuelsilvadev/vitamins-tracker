@@ -1,4 +1,4 @@
-import { Spinner, Text } from "@wonderflow/react-components";
+import { Spinner, Text, Button } from "@wonderflow/react-components";
 import SearchForm from "components/search-form/SearchForm";
 import { useState } from "react";
 import { InfiniteData, useInfiniteQuery } from "react-query";
@@ -170,6 +170,9 @@ function FoodCard({ id, name, images, vitamins }: FoodCardProps) {
           )}
         </ul>
       ) : null}
+      <Button fullWidth className={styles.foodCardConsumedButton}>
+        consumed today
+      </Button>
     </article>
   );
 }
