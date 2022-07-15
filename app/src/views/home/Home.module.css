@@ -17,14 +17,28 @@
 
 .foodList {
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-16);
   padding: 0;
 }
 
-.foodList > * {
-  width: calc(25% - var(--space-16));
+@media (min-width: 568px) {
+  .foodList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 850px) {
+  .foodList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .foodList{
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .foodCard {
