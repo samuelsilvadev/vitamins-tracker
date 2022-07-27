@@ -1,3 +1,7 @@
+.homeWrapper {
+  margin-bottom: 110px;
+}
+
 .homeContentManagementWrapper {
   margin-top: var(--space-16);
 }

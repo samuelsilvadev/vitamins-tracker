@@ -1,7 +1,10 @@
-import { Spinner, Text, Button } from "@wonderflow/react-components";
+import { Spinner, Text, Button, Container } from "@wonderflow/react-components";
+import FixedFooter from "components/fixed-footer/FixedFooter";
 import SearchForm from "components/search-form/SearchForm";
+import { useConsumedFood } from "context/ConsumedFood";
 import { useState } from "react";
 import { InfiniteData, useInfiniteQuery } from "react-query";
+import { Link } from "react-router-dom";
 import styles from "./Home.module.css";
 
 function cx(...classNames: string[]) {
@@ -99,6 +102,7 @@ type FoodCardProps = {
   name: string;
   images: Image[];
   vitamins: Vitamin[];
+  onConsume: (id: string) => void;
 };
 
 function extractAllImagesFormats(image?: Image) {
@@ -134,9 +138,13 @@ function extractAllImagesFormats(image?: Image) {
 
 const IMAGES_SIZES = ["320w", "640w", "1280w", "2560w"];
 
-function FoodCard({ id, name, images, vitamins }: FoodCardProps) {
+function FoodCard({ id, name, images, vitamins, onConsume }: FoodCardProps) {
   const [firstImage] = images;
   const allFormatsFromFirstImage = extractAllImagesFormats(firstImage);
+
+  const handleOnConsume = () => {
+    onConsume(id);
+  };
 
   return (
     <article className={styles.foodCard}>
@@ -170,7 +178,11 @@ function FoodCard({ id, name, images, vitamins }: FoodCardProps) {
           )}
         </ul>
       ) : null}
-      <Button fullWidth className={styles.foodCardConsumedButton}>
+      <Button
+        fullWidth
+        className={styles.foodCardConsumedButton}
+        onClick={handleOnConsume}
+      >
         consumed today
       </Button>
     </article>
@@ -179,9 +191,10 @@ function FoodCard({ id, name, images, vitamins }: FoodCardProps) {
 
 type FoodsListProps = {
   foods: Food[];
+  onConsume: (id: string) => void;
 };
 
-function FoodsList({ foods }: FoodsListProps) {
+function FoodsList({ foods, onConsume }: FoodsListProps) {
   return (
     <ul className={styles.foodList}>
       {foods.map(({ id, attributes: { name, images, vitamins } }) => (
@@ -191,6 +204,7 @@ function FoodsList({ foods }: FoodsListProps) {
             name={name}
             images={images.data}
             vitamins={vitamins.data}
+            onConsume={onConsume}
           />
         </li>
       ))}
@@ -213,6 +227,8 @@ function HomeContentManagement({
   error,
   data,
 }: HomeContentManagementProps) {
+  const { addConsumedFoodId } = useConsumedFood();
+
   if (isLoading) {
     return (
       <div
@@ -280,7 +296,13 @@ function HomeContentManagement({
           },
         } = page;
 
-        return <FoodsList key={pageNumber} foods={foods} />;
+        return (
+          <FoodsList
+            key={pageNumber}
+            foods={foods}
+            onConsume={addConsumedFoodId}
+          />
+        );
       }) ?? null}
     </div>
   );
@@ -303,10 +325,15 @@ function Home() {
   };
 
   return (
-    <>
+    <Container padding={false} className={styles.homeWrapper}>
       <SearchForm onSearch={handleOnSearch} />
       <HomeContentManagement isLoading={isLoading} error={error} data={data} />
-    </>
+      <FixedFooter>
+        <Button as={Link} to="/reports" kind="secondary">
+          Today's report
+        </Button>
+      </FixedFooter>
+    </Container>
   );
 }
 
