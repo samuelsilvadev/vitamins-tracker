@@ -1,0 +1,13 @@
+.fixedFooter {
+    background-color: var(--global-background);
+    border-top: 2px solid var(--dimmed-9);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    width: 100%;
+}
