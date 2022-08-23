@@ -2,6 +2,7 @@ import { Container } from "@wonderflow/react-components";
 import { ConsumedFoodProvider } from "context/ConsumedFood";
 import { Routes, Route } from "react-router-dom";
 import Home from "views/home/Home";
+import Report from "views/report/Report";
 import styles from "./App.module.css";
 
 function App() {
@@ -10,7 +11,7 @@ function App() {
       <ConsumedFoodProvider>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/example" element={<h1>Example Route</h1>} />
+          <Route path="/reports" element={<Report />} />
         </Routes>
       </ConsumedFoodProvider>
     </Container>

@@ -1,37 +1,48 @@
 import { createContext, ReactElement, useContext, useState } from "react";
+import { Food } from "types/global";
 
 type ConsumedFoodProps = {
   children: ReactElement;
 };
 
+type ConsumedFoodWithQuantity = {
+  food: Food;
+  quantity: number;
+};
+
 type ConsumedFoodContextDefinition = {
-  foods: Map<string, number>;
-  addConsumedFoodId: (foodId: string) => void;
+  foods: [string, ConsumedFoodWithQuantity][];
+  addConsumedFood: (food: Food) => void;
 };
 
 const ConsumedFoodContext = createContext<ConsumedFoodContextDefinition>({
-  foods: new Map(),
-  addConsumedFoodId: () => null,
+  foods: [],
+  addConsumedFood: () => null,
 });
 
 const DEFAULT_QUANTITY = 1;
 
 export function ConsumedFoodProvider(props: ConsumedFoodProps) {
-  const [foods, setFoods] = useState(new Map<string, number>());
+  const [foods, setFoods] = useState(
+    new Map<string, ConsumedFoodWithQuantity>()
+  );
 
-  const addConsumedFoodId = (foodId: string) => {
+  const addConsumedFood = (food: Food) => {
     setFoods((previousFoods) => {
-      const previousQuantity = previousFoods.get(foodId) ?? 0;
+      const previousQuantity = previousFoods.get(food.id)?.quantity ?? 0;
       const updatedQuantity = previousQuantity + DEFAULT_QUANTITY;
 
-      return new Map([...previousFoods, [foodId, updatedQuantity]]);
+      return new Map([
+        ...previousFoods,
+        [food.id, { food, quantity: updatedQuantity }],
+      ]);
     });
   };
 
   return (
     <ConsumedFoodContext.Provider
       {...props}
-      value={{ foods, addConsumedFoodId }}
+      value={{ foods: [...foods.entries()], addConsumedFood }}
     />
   );
 }

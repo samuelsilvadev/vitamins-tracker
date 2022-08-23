@@ -5,6 +5,7 @@ import { useConsumedFood } from "context/ConsumedFood";
 import { useState } from "react";
 import { InfiniteData, useInfiniteQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { Food, Image, Vitamin } from "types/global";
 import styles from "./Home.module.css";
 
 function cx(...classNames: string[]) {
@@ -34,57 +35,6 @@ async function fetchFoodsPaginated({ page = 1, foodName = "" }) {
   }
 }
 
-type ImageFormat = {
-  ext: string;
-  hash: string;
-  height: number;
-  mime: string;
-  name: string;
-  path: string | null;
-  size: number;
-  url: string;
-  width: number;
-};
-
-type Image = {
-  attributes: Omit<ImageFormat, "path"> & {
-    alternativeText: string;
-    caption: string;
-    createdAt: string;
-    previewUrl: string | null;
-    provider: string;
-    provider_metadata: string | null;
-    size: number;
-    updatedAt: string;
-    formats: Record<string, ImageFormat>;
-  };
-};
-
-type Vitamin = {
-  attributes: {
-    createdAt: string;
-    description: string | null;
-    locale: string;
-    name: string;
-    publishedAt: string;
-    updatedAt: string;
-  };
-  id: number;
-};
-
-type Food = {
-  id: string;
-  attributes: {
-    name: string;
-    images: {
-      data: Image[];
-    };
-    vitamins: {
-      data: Vitamin[];
-    };
-  };
-};
-
 type FoodsPaginatedResponse = {
   data: Food[];
   meta: {
@@ -102,7 +52,7 @@ type FoodCardProps = {
   name: string;
   images: Image[];
   vitamins: Vitamin[];
-  onConsume: (id: string) => void;
+  onConsume: () => void;
 };
 
 function extractAllImagesFormats(image?: Image) {
@@ -142,10 +92,6 @@ function FoodCard({ id, name, images, vitamins, onConsume }: FoodCardProps) {
   const [firstImage] = images;
   const allFormatsFromFirstImage = extractAllImagesFormats(firstImage);
 
-  const handleOnConsume = () => {
-    onConsume(id);
-  };
-
   return (
     <article className={styles.foodCard}>
       {firstImage && (
@@ -181,7 +127,7 @@ function FoodCard({ id, name, images, vitamins, onConsume }: FoodCardProps) {
       <Button
         fullWidth
         className={styles.foodCardConsumedButton}
-        onClick={handleOnConsume}
+        onClick={onConsume}
       >
         consumed today
       </Button>
@@ -191,23 +137,35 @@ function FoodCard({ id, name, images, vitamins, onConsume }: FoodCardProps) {
 
 type FoodsListProps = {
   foods: Food[];
-  onConsume: (id: string) => void;
 };
 
-function FoodsList({ foods, onConsume }: FoodsListProps) {
+function FoodsList({ foods }: FoodsListProps) {
+  const { addConsumedFood } = useConsumedFood();
+
   return (
     <ul className={styles.foodList}>
-      {foods.map(({ id, attributes: { name, images, vitamins } }) => (
-        <li key={id}>
-          <FoodCard
-            id={id}
-            name={name}
-            images={images.data}
-            vitamins={vitamins.data}
-            onConsume={onConsume}
-          />
-        </li>
-      ))}
+      {foods.map((food) => {
+        const {
+          id,
+          attributes: { name, images, vitamins },
+        } = food;
+
+        const handleOnConsumeFood = () => {
+          addConsumedFood(food);
+        };
+
+        return (
+          <li key={id}>
+            <FoodCard
+              id={id}
+              name={name}
+              images={images.data}
+              vitamins={vitamins.data}
+              onConsume={handleOnConsumeFood}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -227,8 +185,6 @@ function HomeContentManagement({
   error,
   data,
 }: HomeContentManagementProps) {
-  const { addConsumedFoodId } = useConsumedFood();
-
   if (isLoading) {
     return (
       <div
@@ -296,13 +252,7 @@ function HomeContentManagement({
           },
         } = page;
 
-        return (
-          <FoodsList
-            key={pageNumber}
-            foods={foods}
-            onConsume={addConsumedFoodId}
-          />
-        );
+        return <FoodsList key={pageNumber} foods={foods} />;
       }) ?? null}
     </div>
   );
