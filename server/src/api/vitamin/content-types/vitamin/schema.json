@@ -33,9 +33,9 @@
       },
       "type": "text"
     },
-    "food": {
+    "foods": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::food.food",
       "inversedBy": "vitamins"
     }

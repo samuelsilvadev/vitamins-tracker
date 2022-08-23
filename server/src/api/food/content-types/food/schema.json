@@ -14,9 +14,9 @@
   "attributes": {
     "vitamins": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::vitamin.vitamin",
-      "mappedBy": "food"
+      "mappedBy": "foods"
     },
     "name": {
       "type": "string",
