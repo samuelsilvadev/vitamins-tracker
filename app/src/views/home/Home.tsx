@@ -279,7 +279,7 @@ function Home() {
       <SearchForm onSearch={handleOnSearch} />
       <HomeContentManagement isLoading={isLoading} error={error} data={data} />
       <FixedFooter>
-        <Button as={Link} to="/reports" kind="secondary">
+        <Button as={Link} to="/reports" kind="primary">
           Today's report
         </Button>
       </FixedFooter>
