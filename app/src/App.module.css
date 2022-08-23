@@ -1,5 +1,5 @@
 @import "@wonderflow/tokens/platforms/web/tokens.css";
 
 .container {
-  margin-top: 40px;
+  margin-top: var(--app-top-gap);
 }

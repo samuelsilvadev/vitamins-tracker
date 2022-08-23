@@ -7,6 +7,7 @@ import App from "./App";
 
 import "@wonderflow/react-components/core.css";
 import "@wonderflow/themes";
+import "./variables.css";
 
 const queryClient = new QueryClient();
 
