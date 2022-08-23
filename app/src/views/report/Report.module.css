@@ -1,0 +1,15 @@
+.reportWrapper {
+  margin-bottom: 110px;
+}
+
+.reportHeader {
+  position: sticky;
+  top: var(--app-top-gap);
+  background-color: var(--global-background);
+  z-index: 1;
+  padding-bottom: 20px;
+}
+
+.vitaminCardWrapper {
+  padding: 20px 0;
+}
