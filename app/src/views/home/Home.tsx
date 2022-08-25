@@ -53,6 +53,7 @@ type FoodCardProps = {
   images: Image[];
   vitamins: Vitamin[];
   onConsume: () => void;
+  quantity: number;
 };
 
 function extractAllImagesFormats(image?: Image) {
@@ -88,12 +89,24 @@ function extractAllImagesFormats(image?: Image) {
 
 const IMAGES_SIZES = ["320w", "640w", "1280w", "2560w"];
 
-function FoodCard({ id, name, images, vitamins, onConsume }: FoodCardProps) {
+function FoodCard({
+  id,
+  name,
+  images,
+  vitamins,
+  quantity,
+  onConsume,
+}: FoodCardProps) {
   const [firstImage] = images;
   const allFormatsFromFirstImage = extractAllImagesFormats(firstImage);
 
   return (
     <article className={styles.foodCard}>
+      {quantity ? (
+        <Text size={14} className={styles.foodCardConsumedFoodQuantity}>
+          {quantity}
+        </Text>
+      ) : null}
       {firstImage && (
         <img
           className={styles.foodCardImage}
@@ -140,7 +153,7 @@ type FoodsListProps = {
 };
 
 function FoodsList({ foods }: FoodsListProps) {
-  const { addConsumedFood } = useConsumedFood();
+  const { addConsumedFood, foods: consumedFoods } = useConsumedFood();
 
   return (
     <ul className={styles.foodList}>
@@ -149,6 +162,7 @@ function FoodsList({ foods }: FoodsListProps) {
           id,
           attributes: { name, images, vitamins },
         } = food;
+        const consumedFood = consumedFoods.get(id);
 
         const handleOnConsumeFood = () => {
           addConsumedFood(food);
@@ -162,6 +176,7 @@ function FoodsList({ foods }: FoodsListProps) {
               images={images.data}
               vitamins={vitamins.data}
               onConsume={handleOnConsumeFood}
+              quantity={consumedFood?.quantity ?? 0}
             />
           </li>
         );

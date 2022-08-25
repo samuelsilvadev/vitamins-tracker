@@ -11,12 +11,12 @@ type ConsumedFoodWithQuantity = {
 };
 
 type ConsumedFoodContextDefinition = {
-  foods: [string, ConsumedFoodWithQuantity][];
+  foods: Map<string, ConsumedFoodWithQuantity>;
   addConsumedFood: (food: Food) => void;
 };
 
 const ConsumedFoodContext = createContext<ConsumedFoodContextDefinition>({
-  foods: [],
+  foods: new Map(),
   addConsumedFood: () => null,
 });
 
@@ -42,7 +42,7 @@ export function ConsumedFoodProvider(props: ConsumedFoodProps) {
   return (
     <ConsumedFoodContext.Provider
       {...props}
-      value={{ foods: [...foods.entries()], addConsumedFood }}
+      value={{ foods, addConsumedFood }}
     />
   );
 }

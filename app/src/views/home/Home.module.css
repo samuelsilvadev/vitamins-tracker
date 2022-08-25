@@ -40,7 +40,7 @@
 }
 
 @media (min-width: 1024px) {
-  .foodList{
+  .foodList {
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -52,6 +52,7 @@
   border-radius: var(--radius-4);
   padding: var(--space-8);
   height: 100%;
+  position: relative;
 }
 
 .foodCardImage {
@@ -69,9 +70,26 @@
 }
 
 .vitaminsList > *:not(:last-child)::after {
-  content: ',\00a0';
+  content: ",\00a0";
 }
 
 .foodCardConsumedButton {
   margin-top: auto;
+}
+
+.foodCardConsumedFoodQuantity {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(40%, -40%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--cta-foreground);
+  background-color: var(--global-background);
+  border: 1px solid hsl(var(--color-red-0));
+  border-radius: 50%;
+  z-index: 2;
 }

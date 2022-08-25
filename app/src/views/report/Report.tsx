@@ -35,7 +35,8 @@ function groupByVitamins(foods: Food[]) {
 
 function Report() {
   const { foods } = useConsumedFood();
-  const onlyFoods = foods.map(([, { food }]) => food);
+  const normalizedFoods = [...foods.entries()];
+  const onlyFoods = normalizedFoods.map(([, { food }]) => food);
   const groupedFoods = groupByVitamins(onlyFoods);
   const vitamins = Object.values(groupedFoods);
 
