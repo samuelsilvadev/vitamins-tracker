@@ -51,7 +51,15 @@ function Report() {
             <List.Li key={name}>
               <Stack className={styles.vitaminCardWrapper} columnGap={8}>
                 <Title level="2">{name}</Title>
-                <Stack direction="row" columnGap={8} as={List} hideMarker>
+                <Stack
+                  direction="row"
+                  columnGap={8}
+                  rowGap={8}
+                  as={List}
+                  wrap
+                  hideMarker
+                  fill={false}
+                >
                   {foods.map(({ name: foodName }) => (
                     <List.Li key={foodName}>
                       <Chip color="green">{foodName}</Chip>

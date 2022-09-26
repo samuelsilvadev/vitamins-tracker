@@ -4,10 +4,12 @@
 
 .reportHeader {
   position: sticky;
-  top: var(--app-top-gap);
+  top: 0;
   background-color: var(--global-background);
   z-index: 1;
+  padding-top: var(--app-top-gap);
   padding-bottom: 20px;
+  margin-top: calc(var(--app-top-gap) * -1);
 }
 
 .vitaminCardWrapper {
