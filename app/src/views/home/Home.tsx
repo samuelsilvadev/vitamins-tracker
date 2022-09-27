@@ -2,7 +2,7 @@ import { Spinner, Text, Button, Container } from "@wonderflow/react-components";
 import FixedFooter from "components/fixed-footer/FixedFooter";
 import SearchForm from "components/search-form/SearchForm";
 import { useConsumedFood } from "context/ConsumedFood";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InfiniteData, useInfiniteQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { Food, Image, Vitamin } from "types/global";
@@ -53,7 +53,7 @@ type FoodCardProps = {
   images: Image[];
   vitamins: Vitamin[];
   onConsume: () => void;
-  quantity: number;
+  quantity?: number;
 };
 
 function extractAllImagesFormats(image?: Image) {
@@ -87,6 +87,46 @@ function extractAllImagesFormats(image?: Image) {
   return images;
 }
 
+type FoodQuantityProps = {
+  quantity?: number;
+};
+
+function FoodQuantityBadge({ quantity }: FoodQuantityProps) {
+  const [previousQuantity, setPreviousQuantity] = useState(quantity);
+
+  useEffect(() => {
+    if (!quantity) {
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      setPreviousQuantity(quantity);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [quantity]);
+
+  if (!quantity) {
+    return null;
+  }
+
+  const shouldAnimate = previousQuantity !== quantity;
+
+  return (
+    <Text
+      size={14}
+      className={cx(
+        styles.foodBadgeQuantity,
+        shouldAnimate ? styles.foodBadgeQuantityAnimate : ""
+      )}
+    >
+      {quantity}
+    </Text>
+  );
+}
+
 const IMAGES_SIZES = ["320w", "640w", "1280w", "2560w"];
 
 function FoodCard({
@@ -102,11 +142,7 @@ function FoodCard({
 
   return (
     <article className={styles.foodCard}>
-      {quantity ? (
-        <Text size={14} className={styles.foodCardConsumedFoodQuantity}>
-          {quantity}
-        </Text>
-      ) : null}
+      <FoodQuantityBadge quantity={quantity} />
       {firstImage && (
         <img
           className={styles.foodCardImage}
@@ -176,7 +212,7 @@ function FoodsList({ foods }: FoodsListProps) {
               images={images.data}
               vitamins={vitamins.data}
               onConsume={handleOnConsumeFood}
-              quantity={consumedFood?.quantity ?? 0}
+              quantity={consumedFood?.quantity}
             />
           </li>
         );
@@ -290,7 +326,7 @@ function Home() {
   };
 
   return (
-    <Container padding={false} className={styles.homeWrapper}>
+    <Container className={styles.homeWrapper}>
       <SearchForm onSearch={handleOnSearch} />
       <HomeContentManagement isLoading={isLoading} error={error} data={data} />
       <FixedFooter>
